@@ -1,0 +1,12 @@
+{
+  "name": "claude-mods",
+  "owner": { "name": "Cosmin Aftanase" },
+  "description": "Claude Code mods.",
+  "plugins": [
+    {
+      "name": "prompt-info",
+      "source": "./plugins/prompt-info",
+      "description": "Folder, branch, PR, context and model at the end of the prompt hint line."
+    }
+  ]
+}

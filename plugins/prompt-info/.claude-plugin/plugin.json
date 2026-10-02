@@ -1,0 +1,9 @@
+{
+  "name": "prompt-info",
+  "version": "0.1.0",
+  "description": "Folder, branch, PR, context and model at the end of the prompt hint line",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "Cosmin Aftanase"
+  }
+}
