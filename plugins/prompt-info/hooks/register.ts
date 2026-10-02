@@ -1,15 +1,20 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
-// "new project · main (PR #142)": git and gh are slow, so refreshed off the render path
+// "new project / SHOP-142 · main (PR #142)": git and gh are slow, so refreshed off the render path
 const repo = atom({ plugin: 'prompt-info', key: 'repo' } as const, '')
 
 async function refresh($: EngineInterface) {
   const cwd = await $.session.cwd()
-  let text = cwd.split('/').filter(Boolean).at(-1) ?? cwd
-  const branch = (await $.process.run(['git', 'branch', '--show-current'], { cwd, timeoutMs: 3000 })).stdout.trim()
-  if (branch) {
-    text += ` · ${branch}`
+  const base = (p: string) => p.split('/').filter(Boolean).at(-1) ?? p
+  let text = base(cwd)
+  const git = await $.process.run(['git', 'rev-parse', '--path-format=absolute', '--git-common-dir', '--show-toplevel', '--abbrev-ref', 'HEAD'], { cwd, timeoutMs: 3000 })
+  const [common, top, branch] = git.stdout.trim().split('\n')
+  if (git.exitCode === 0 && common && top && branch) {
+    // a linked worktree's common dir is the main checkout's .git
+    const name = base(common.replace(/\/\.git\/?$/, ''))
+    text = base(top) === name ? name : `${name} / ${base(top)}`
+    if (branch !== 'HEAD') text += ` · ${branch}`
     const pr = await $.process.run(['gh', 'pr', 'view', '--json', 'number', '-q', '.number'], { cwd, timeoutMs: 10000 })
     if (pr.exitCode === 0 && pr.stdout.trim()) text += ` (PR #${pr.stdout.trim()})`
   }
