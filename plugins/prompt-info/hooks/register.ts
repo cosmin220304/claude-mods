@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
-// "new project · main · PR #142": git and gh are slow, so refreshed off the render path
+// "new project · main (PR #142)": git and gh are slow, so refreshed off the render path
 const repo = atom({ plugin: 'prompt-info', key: 'repo' } as const, '')
 
 async function refresh($: EngineInterface) {
@@ -11,7 +11,7 @@ async function refresh($: EngineInterface) {
   if (branch) {
     text += ` · ${branch}`
     const pr = await $.process.run(['gh', 'pr', 'view', '--json', 'number', '-q', '.number'], { cwd, timeoutMs: 10000 })
-    if (pr.exitCode === 0 && pr.stdout.trim()) text += ` · PR #${pr.stdout.trim()}`
+    if (pr.exitCode === 0 && pr.stdout.trim()) text += ` (PR #${pr.stdout.trim()})`
   }
   await update($, repo, () => text)
 }
