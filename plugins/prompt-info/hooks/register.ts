@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
-// "pdf-signer · main · PR #142": git and gh are slow, so refreshed off the render path
+// "new project · main · PR #142": git and gh are slow, so refreshed off the render path
 const repo = atom({ plugin: 'prompt-info', key: 'repo' } as const, '')
 
 async function refresh($: EngineInterface) {
